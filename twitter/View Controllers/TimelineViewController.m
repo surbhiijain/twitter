@@ -8,9 +8,11 @@
 
 #import "TimelineViewController.h"
 #import "APIManager.h"
+#import "LoginViewController.h"
+#import "AppDelegate.h"
 
 @interface TimelineViewController ()
-@property (nonatomic, weak)NSMutableArray *tweets;
+@property (nonatomic, strong) NSMutableArray *tweets;
 
 @end
 
@@ -31,6 +33,17 @@
             NSLog(@"😫😫😫 Error getting home timeline: %@", error.localizedDescription);
         }
     }];
+}
+
+- (IBAction)didLogout:(UIButton *)sender {
+    // navigate back to login view controller
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    LoginViewController *loginViewController = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    appDelegate.window.rootViewController = loginViewController;
+    
+    // clear access tokens
+    [[APIManager shared] logout];
 }
 
 - (void)didReceiveMemoryWarning {
