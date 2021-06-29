@@ -11,10 +11,13 @@
 #import "LoginViewController.h"
 #import "AppDelegate.h"
 #import "TweetCell.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSMutableArray *arrayOfTweets;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
+
 
 @end
 
@@ -25,21 +28,14 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     
-    // Get timeline
-    [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
-        if (tweets) {
-            self.arrayOfTweets = tweets;
-            NSLog(@"😎😎😎 Successfully loaded home timeline");
-            for (Tweet *tweet in tweets) {
-                NSLog(@"%@", tweet.text);
-            }
-            [self.tableView reloadData];
+    self.refreshControl = [[UIRefreshControl alloc] init];
 
-        } else {
-            NSLog(@"😫😫😫 Error getting home timeline: %@", error.localizedDescription);
-        }
-    }];
     
+    // Get timeline
+    [self fetchTweets];
+    
+    [self.refreshControl addTarget:self action:@selector(fetchTweets) forControlEvents:(UIControlEventValueChanged)];
+    [self.tableView insertSubview:self.refreshControl atIndex:0];
 }
 
 - (IBAction)didLogout:(UIButton *)sender {
@@ -51,6 +47,23 @@
     
     // clear access tokens
     [[APIManager shared] logout];
+}
+
+- (void)fetchTweets {
+    [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
+        if (tweets) {
+            self.arrayOfTweets = tweets;
+//            NSLog(@"😎😎😎 Successfully loaded home timeline");
+//            for (Tweet *tweet in tweets) {
+//                NSLog(@"%@", tweet.text);
+//            }
+            [self.tableView reloadData];
+
+        } else {
+            NSLog(@"😫😫😫 Error getting home timeline: %@", error.localizedDescription);
+        }
+        [self.refreshControl endRefreshing];
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -72,6 +85,8 @@
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TweetCell"];
     
+    cell.profilePicView.image = nil;
+    
     Tweet *tweet = self.arrayOfTweets[indexPath.row];
     cell.NameLabel.text = tweet.user.name;
     cell.dateLabel.text = tweet.createdAtString;
@@ -80,6 +95,10 @@
     cell.retweetCountLabel.text = [@(tweet.retweetCount) stringValue];
     cell.usernameLabel.text = tweet.user.screenName;
     cell.replyCountLabel.text = [@(tweet.replyCount) stringValue];
+    
+    NSString *profileURLString = tweet.user.profilePicture;
+    NSURL *profileUrl = [NSURL URLWithString:profileURLString];
+    [cell.profilePicView setImageWithURL:profileUrl];
     
     return cell;
 }
