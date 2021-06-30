@@ -23,6 +23,7 @@
 
     // Configure the view for the selected state
 }
+
 - (IBAction)didTapFavorite:(UIButton *)sender {
     if (self.tweet.favorited) {
         [[APIManager shared] unFavorite:self.tweet completion:^(Tweet *tweet, NSError *error) {
@@ -48,6 +49,7 @@
         }];
     }
 }
+
 - (IBAction)didTapRetweet:(UIButton *)sender {
     if (self.tweet.retweeted) {
         [[APIManager shared] unRetweet:self.tweet completion:^(Tweet *tweet, NSError *error) {
@@ -74,6 +76,7 @@
     }
 }
 
+// update all labels and images in the cell
 - (void)refreshData {
     
     self.profilePicView.image = nil;
@@ -81,11 +84,12 @@
     self.retweetButton.imageView.image = nil;
     
     self.NameLabel.text = self.tweet.user.name;
+    self.usernameLabel.text = self.tweet.user.screenName;
     self.dateLabel.text = self.tweet.createdAtString;
     self.tweetLabel.text = self.tweet.text;
+    
     self.favoriteCountLabel.text =  [@(self.tweet.favoriteCount) stringValue];
     self.retweetCountLabel.text = [@(self.tweet.retweetCount) stringValue];
-    self.usernameLabel.text = self.tweet.user.screenName;
     self.replyCountLabel.text = [@(self.tweet.replyCount) stringValue];
     
     UIImage *favIcon = [UIImage imageNamed:@"favor-icon"];
@@ -93,10 +97,8 @@
     
     if (self.tweet.favorited) {
         self.favoriteButton.imageView.image = favIconSelected;
-        NSLog(@"in if");
     } else {
         self.favoriteButton.imageView.image = favIcon;
-        NSLog(@"in else");
     }
     
     UIImage *retweetIcon = [UIImage imageNamed:@"retweet-icon"];
