@@ -11,7 +11,6 @@
 #import "LoginViewController.h"
 #import "AppDelegate.h"
 #import "TweetCell.h"
-#import "UIImageView+AFNetworking.h"
 #import "ComposeViewController.h"
 
 @interface TimelineViewController () <ComposeViewControllerDelegate, UITableViewDataSource, UITableViewDelegate>
@@ -93,23 +92,11 @@
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TweetCell"];
     
-    cell.profilePicView.layer.cornerRadius  = cell.profilePicView.frame.size.width/2;
-    
-    cell.profilePicView.image = nil;
-    
     Tweet *tweet = self.arrayOfTweets[indexPath.row];
-    cell.NameLabel.text = tweet.user.name;
-    cell.dateLabel.text = tweet.createdAtString;
-    cell.tweetLabel.text = tweet.text;
-    cell.favoriteCountLabel.text =  [@(tweet.favoriteCount) stringValue];
-    cell.retweetCountLabel.text = [@(tweet.retweetCount) stringValue];
-    cell.usernameLabel.text = tweet.user.screenName;
-    cell.replyCountLabel.text = [@(tweet.replyCount) stringValue];
+    cell.tweet = tweet;
     
-    NSString *profileURLString = tweet.user.profilePicture;
-    NSURL *profileUrl = [NSURL URLWithString:profileURLString];
-    [cell.profilePicView setImageWithURL:profileUrl];
-    
+    [cell refreshData];
+
     return cell;
 }
 
