@@ -27,7 +27,7 @@
              dictionary = originalTweet;
          }
          self.idStr = dictionary[@"id_str"];
-         self.text = dictionary[@"text"];
+         self.text = dictionary[@"full_text"];
          self.favoriteCount = [dictionary[@"favorite_count"] intValue];
          self.favorited = [dictionary[@"favorited"] boolValue];
          self.retweetCount = [dictionary[@"retweet_count"] intValue];
@@ -40,17 +40,19 @@
          
          // Format createdAt date string
          NSString *createdAtOriginalString = dictionary[@"created_at"];
-         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-         formatter.dateFormat = @"E MMM d HH:mm:ss Z y";
-         NSDate *date = [formatter dateFromString:createdAtOriginalString];
-         formatter.dateStyle = NSDateFormatterShortStyle;
-         formatter.timeStyle = NSDateFormatterNoStyle;
+         NSDateFormatter *formatterDate = [[NSDateFormatter alloc] init];
+         formatterDate.dateFormat = @"E MMM d HH:mm:ss Z y";
+         NSDate *date = [formatterDate dateFromString:createdAtOriginalString];
+         formatterDate.dateStyle = NSDateFormatterShortStyle;
+         formatterDate.timeStyle = NSDateFormatterShortStyle;
+         
+         self.fullDate = [formatterDate stringFromDate:date];
          
          // use DateTools pod to add time ago feature
          NSDate *timeNow = [NSDate date];
          NSInteger seconds = [timeNow secondsFrom:date];
          NSDate *timeDate = [NSDate dateWithTimeIntervalSinceNow:-seconds];
-         self.createdAtString = timeDate.shortTimeAgoSinceNow;
+         self.shortenedDate = timeDate.shortTimeAgoSinceNow;
 
      }
      return self;

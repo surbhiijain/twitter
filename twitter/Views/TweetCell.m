@@ -14,8 +14,8 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    // make profile pictures circular
     self.profilePicView.layer.cornerRadius  = self.profilePicView.frame.size.width/2;
-    // Initialization code
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -85,7 +85,7 @@
     
     self.NameLabel.text = self.tweet.user.name;
     self.usernameLabel.text = self.tweet.user.screenName;
-    self.dateLabel.text = self.tweet.createdAtString;
+    self.dateLabel.text = self.tweet.shortenedDate;
     self.tweetLabel.text = self.tweet.text;
     
     self.favoriteCountLabel.text =  [@(self.tweet.favoriteCount) stringValue];
@@ -113,7 +113,6 @@
     NSString *profileURLString = self.tweet.user.profilePicture;
     NSURL *profileUrl = [NSURL URLWithString:profileURLString];
     [self.profilePicView setImageWithURL:profileUrl];
-    
-    [self reloadInputViews];
 }
+
 @end

@@ -18,7 +18,8 @@
 @property (nonatomic) int retweetCount; // Update favorite count label
 @property (nonatomic) BOOL retweeted; // Configure retweet button
 @property (nonatomic, strong) User *user; // Contains Tweet author's name, screenname, etc.
-@property (nonatomic, strong) NSString *createdAtString; // Display date
+@property (nonatomic, strong) NSString *shortenedDate; // Abbreviated time from date
+@property (nonatomic, strong) NSString *fullDate; // Full display date
 @property (nonatomic) int replyCount;
 
 // For Retweets

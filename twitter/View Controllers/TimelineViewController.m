@@ -12,8 +12,9 @@
 #import "AppDelegate.h"
 #import "TweetCell.h"
 #import "ComposeViewController.h"
+#import "DetailsViewController.h"
 
-@interface TimelineViewController () <ComposeViewControllerDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface TimelineViewController () <ComposeViewControllerDelegate, DetailsViewControllerDelegate, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSMutableArray *arrayOfTweets;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
@@ -53,11 +54,7 @@
 - (void)fetchTweets {
     [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
         if (tweets) {
-            self.arrayOfTweets = tweets;
-//            NSLog(@"😎😎😎 Successfully loaded home timeline");
-//            for (Tweet *tweet in tweets) {
-//                NSLog(@"%@", tweet.text);
-//            }
+            self.arrayOfTweets = (NSMutableArray *) tweets;
             [self.tableView reloadData];
 
         } else {
@@ -69,6 +66,10 @@
 
 - (void) didTweet:(Tweet *)tweet {
     [self.arrayOfTweets insertObject:tweet atIndex:0];
+    [self didAction];
+}
+
+- (void) didAction {
     [self.tableView reloadData];
 }
 
@@ -76,18 +77,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
- */
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    UINavigationController *navigationController = [segue destinationViewController];
-    ComposeViewController *composeController = (ComposeViewController*)navigationController.topViewController;
-    composeController.delegate = self;
-}
-
-
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TweetCell"];
@@ -104,5 +93,23 @@
     return self.arrayOfTweets.count;
 }
 
+/*
+#pragma mark - Navigation
+ */
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString: @"tweetSegue"]) {
+        UINavigationController *navigationController = [segue destinationViewController];
+        ComposeViewController *composeController = (ComposeViewController*)navigationController.topViewController;
+        composeController.delegate = self;
+    }
+    if ([segue.identifier isEqualToString: @"detailsSegue"]) {
+        DetailsViewController *detailsViewController = [segue destinationViewController];
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+        detailsViewController.tweet = self.arrayOfTweets[indexPath.row];
+        detailsViewController.delegate = self;
+    }
+
+}
 
 @end
