@@ -8,6 +8,7 @@
 
 #import "ComposeViewController.h"
 #import "APIManager.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface ComposeViewController () 
 @property (weak, nonatomic) IBOutlet UITextView *tweetContentView;
@@ -20,6 +21,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self getUserImage];
+    
+    self.tweetContentView.delegate = self;
+    
     self.tweetContentView.layer.borderColor = [[UIColor grayColor] CGColor];
     self.tweetContentView.layer.borderWidth = 1.0;
     self.tweetContentView.layer.cornerRadius = 8;
@@ -27,6 +32,21 @@
     self.profilePicView.layer.cornerRadius  = self.profilePicView.frame.size.width/2;
 
     // Do any additional setup after loading the view.
+}
+
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    // Set the max character limit
+    int characterLimit = 140;
+
+    // Construct what the new text would be if we allowed the user's latest edit
+    NSString *newText = [self.tweetContentView.text stringByReplacingCharactersInRange:range withString:text];
+
+    // TODO: Update character count label
+    self.characterCountLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)newText.length];
+
+    // Should the new text should be allowed? True/False
+    return newText.length < characterLimit;
 }
 
 - (IBAction)didClose:(UIBarButtonItem *)sender {
@@ -41,6 +61,26 @@
         } else{
             [self dismissViewControllerAnimated:true completion:nil];
             [self.delegate didTweet:tweet];
+        }
+    }];
+}
+
+- (void)getUserImage {
+    [[APIManager shared] getUserSettings:^(NSDictionary *userSettings, NSError *error) {
+        if (userSettings) {
+            NSString *screen_name = userSettings[@"screen_name"];
+            [[APIManager shared] getProfilePic:screen_name completion:^(NSDictionary *user, NSError *error) {
+                if (user) {
+                    NSString *profileURLString = user[@"profile_image_url_https"];
+                    NSURL *profileUrl = [NSURL URLWithString:profileURLString];
+                    [self.profilePicView setImageWithURL:profileUrl];
+                } else {
+                    NSLog(@"Error getting profile picture: %@", error.localizedDescription);
+                }
+            }];
+
+        } else {
+            NSLog(@"Error getting user information: %@", error.localizedDescription);
         }
     }];
 }

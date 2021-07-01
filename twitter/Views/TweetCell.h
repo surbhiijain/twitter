@@ -25,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UIButton *favoriteButton;
 @property (weak, nonatomic) IBOutlet UIButton *messageButton;
 
-
 @property (nonatomic, strong) Tweet *tweet;
 
 - (void)refreshData;

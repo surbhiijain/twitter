@@ -30,8 +30,6 @@
     self.tableView.delegate = self;
     
     self.refreshControl = [[UIRefreshControl alloc] init];
-
-
     
     // Get timeline
     [self fetchTweets];

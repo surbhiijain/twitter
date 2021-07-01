@@ -118,4 +118,27 @@ static NSString * const baseURLString = @"https://api.twitter.com";
         completion(nil, error);
     }];
 }
+
+- (void)getProfilePic: (NSString *)screenName completion:(void (^)(NSDictionary *user, NSError *error))completion {
+    NSDictionary *parameters = @{@"screen_name": screenName};
+    [self GET:@"1.1/users/show.json"
+       parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, NSDictionary *  _Nullable user) {
+           // Success
+           completion(user, nil);
+       } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+           // There was a problem
+           completion(nil, error);
+    }];
+}
+
+- (void)getUserSettings:(void(^)(NSDictionary *userSettings, NSError *error))completion {
+    [self GET:@"1.1/account/settings.json"
+       parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, NSDictionary *  _Nullable userSettings) {
+           // Success
+           completion(userSettings, nil);
+       } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+           // There was a problem
+           completion(nil, error);
+    }];
+}
 @end

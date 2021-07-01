@@ -16,6 +16,7 @@
     [super awakeFromNib];
     // make profile pictures circular
     self.profilePicView.layer.cornerRadius  = self.profilePicView.frame.size.width/2;
+    self.imageView.image = nil;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
