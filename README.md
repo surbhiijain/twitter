@@ -55,9 +55,7 @@ Here's a walkthrough of implemented user stories:
 
 1. User can view timeline, like, share, and view the details of posts, as well as compose a new post.
 
-<img src='https://i.imgur.com/ZzQUBaY.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 ![](https://i.imgur.com/50B1iV9.gif)
-
 
 
 2. User can open the app from the homescreen, sign in using the OAuth login flow, and logout.
